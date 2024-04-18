@@ -1,0 +1,16 @@
+{
+  "apps": [
+    {
+      "name": "0xdesigner",
+      "script": "src/monitor.ts",
+      "exec_mode": "fork",
+      "node_args": "",
+      "merge_logs": true,
+      "interpreter": "/home/ubuntu/.bun/bin/bun",
+      "cwd": "/srv/web/0xdesigner",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}
