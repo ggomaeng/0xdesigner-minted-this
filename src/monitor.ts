@@ -78,7 +78,7 @@ export async function syncAndCast() {
     const zoraMintUrl = `https://zora.co/collect/${slug}:${collection.address}/${token.tokenId}`;
 
     await cast({
-      text: `@0xdesigner just minted ${name} on @zora. A ${standard} NFT on ${prettified} chain.`,
+      text: `@0xdesigner just minted ${name} on /zora. A ${standard} NFT on ${prettified} chain.`,
       embeds: [{ url: zoraMintUrl }],
       channelId: "mint-that",
     })
