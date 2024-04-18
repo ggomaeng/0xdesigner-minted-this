@@ -82,7 +82,7 @@ export async function getCommentByDesigner(nft: ZoraNFT) {
   }
 
   const commentByDesigner = resp?.data?.find((comment) => {
-    return comment.minter.username === "0xdesigner";
+    return comment.minter.ens_name === "0xdesigner.eth";
   });
 
   if (commentByDesigner?.comment) {
@@ -112,7 +112,7 @@ export async function getMintCount(nft: ZoraNFT) {
   }
 
   const mintByDesigner = resp?.data?.find((comment) => {
-    return comment.minter.username === "0xdesigner";
+    return comment.minter.ens_name === "0xdesigner.eth";
   });
 
   const mintCount = mintByDesigner?.value;
