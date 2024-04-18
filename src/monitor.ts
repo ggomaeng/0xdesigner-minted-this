@@ -72,14 +72,14 @@ export async function syncAndCast() {
   console.log("NEW MINTS", data.length, data);
   for (const nft of data) {
     const { token, collection } = nft;
-    const { creator, name, totalMinted } = token;
+    const { creator, name } = token;
     Logger.info(`${Date.now()} - New mint: ${name} by ${creator}`);
     const slug = chainNameToSlug(collection.chainName);
-    const prettified = prettifyChainName(collection.chainName);
     // https://zora.co/collect/blast:0xf3a45a18363a583f43f6757ba3d2de59b3d5329a/1
     const zoraMintUrl = `https://zora.co/collect/${slug}:${collection.address}/${token.tokenId}`;
 
-    let text = `minted x${totalMinted} of ${name}`;
+    const minted = await getMintCount(nft);
+    let text = `minted x${minted} of ${name}`;
 
     const comment = await getCommentByDesigner(nft);
     if (comment) {
