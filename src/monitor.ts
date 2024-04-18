@@ -1,6 +1,5 @@
 import { sleep } from "bun";
 import { readFileSync, writeFileSync } from "fs";
-import ky from "ky";
 import cron from "node-cron";
 import { cast } from "../services/neynar-service";
 import { ZoraNFT } from "../types/collect.type";
@@ -10,7 +9,6 @@ import {
   getCommentByDesigner,
   getMintCount,
   nftToFileName,
-  prettifyChainName,
 } from "../utils/zora";
 
 // 30 requests per min rate limit without api key
@@ -22,22 +20,22 @@ export async function getMints(tries = 1) {
     throw new Error("Failed to sync and cast after 10 tries");
   }
 
-  const json = await ky(
+  const resp = await fetch(
     "https://zora.co/api/trpc/user.collectedTokens?batch=1&input=%7B%220%22:%7B%22json%22:%7B%22limit%22:24,%22chainNames%22:%5B%22ETHEREUM-MAINNET%22,%22ZORA-MAINNET%22,%22OPTIMISM-MAINNET%22,%22BASE-MAINNET%22,%22ARBITRUM-MAINNET%22,%22PGN-MAINNET%22,%22BLAST-MAINNET%22%5D,%22userAddress%22:%220xabb485fdc925dc375b5d095a30fcae7f136fd007%22,%22sortDirection%22:%22DESC%22,%22direction%22:%22forward%22%7D%7D%7D"
-  ).json<
-    [
-      {
-        result: {
-          data: {
-            json: {
-              data: {};
-            };
+  );
+
+  const json = (await resp.json()) as [
+    {
+      result: {
+        data: {
+          json: {
+            data: ZoraNFT[];
           };
         };
-      }
-    ]
-  >();
-  const data = json?.[0]?.result?.data?.json?.data as ZoraNFT[];
+      };
+    }
+  ];
+  const data = json?.[0]?.result?.data?.json?.data;
 
   if (!data) {
     Logger.info(`Trying again... try: ${tries}`);
@@ -109,6 +107,7 @@ Logger.info(
   "Starting cron job for 0xdesigner's mints on zora. Checking every minute"
 );
 
+await syncAndCast();
 cron.schedule("* * * * *", async () => {
   Logger.info("Running cron job for 0xdesigner's mints on zora");
   await syncAndCast();
