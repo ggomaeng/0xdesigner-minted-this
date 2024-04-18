@@ -3,10 +3,12 @@ import { readFileSync, writeFileSync } from "fs";
 import ky from "ky";
 import cron from "node-cron";
 import { cast } from "../services/neynar-service";
-import { ZoraNFT } from "../types/zora.types";
+import { ZoraNFT } from "../types/collect.type";
 import { Logger } from "../utils/Logger";
 import {
   chainNameToSlug,
+  getCommentByDesigner,
+  getMintCount,
   nftToFileName,
   prettifyChainName,
 } from "../utils/zora";
@@ -69,16 +71,29 @@ export async function syncAndCast() {
   const data = await getMints();
   console.log("NEW MINTS", data.length, data);
   for (const nft of data) {
-    const { token, collection, standard } = nft;
-    const { creator, name, image } = token;
+    const { token, collection } = nft;
+    const { creator, name } = token;
     Logger.info(`${Date.now()} - New mint: ${name} by ${creator}`);
     const slug = chainNameToSlug(collection.chainName);
     const prettified = prettifyChainName(collection.chainName);
     // https://zora.co/collect/blast:0xf3a45a18363a583f43f6757ba3d2de59b3d5329a/1
     const zoraMintUrl = `https://zora.co/collect/${slug}:${collection.address}/${token.tokenId}`;
 
+    const quantity = await getMintCount(nft);
+    if (quantity === undefined) {
+      Logger.info(`Failed to get mint count for ${name}`);
+      continue;
+    }
+
+    let text = `minted x${quantity} of ${name}`;
+
+    const comment = await getCommentByDesigner(nft);
+    if (comment) {
+      text += `\n\ncommented: ${comment}`;
+    }
+
     await cast({
-      text: `@0xdesigner just minted ${name} on /zora. A ${standard} NFT on ${prettified} chain.`,
+      text,
       embeds: [{ url: zoraMintUrl }],
       channelId: "mint-that",
     })
