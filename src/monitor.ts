@@ -54,10 +54,7 @@ export async function getMints(tries = 1) {
       readFileSync(`./minted/${filename}.json`, "utf-8");
     } catch (e) {
       // doesn't exist. we return it and save it in callback
-      writeFileSync(
-        "./minted/" + filename + ".json",
-        JSON.stringify(nft, null, 2)
-      );
+
       returnData.push(nft);
     }
   }
