@@ -77,12 +77,12 @@ export async function syncAndCast() {
     const zoraMintUrl = `https://zora.co/collect/${slug}:${collection.address}/${token.tokenId}`;
 
     const minted = await getMintCount(nft);
+    let text = `minted x${minted} of ${name}`;
+
     if (!minted) {
       // no mint count - probably airdrop
-      continue;
+      text = `minted ${name}`;
     }
-
-    let text = `minted x${minted} of ${name}`;
 
     const comment = await getCommentByDesigner(nft);
     if (comment) {
