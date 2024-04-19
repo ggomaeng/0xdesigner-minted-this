@@ -115,8 +115,5 @@ export async function getMintCount(nft: ZoraNFT) {
     return comment.minter.ens_name === "0xdesigner.eth";
   });
 
-  const mintCount = mintByDesigner?.value;
-  if (mintCount !== undefined) {
-    return mintCount;
-  }
+  return mintByDesigner;
 }

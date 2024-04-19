@@ -38,7 +38,7 @@ type MintedToken = {
   fee: Fee;
   value: number;
   transaction_info: TransactionInfo;
-  mint_type: string;
+  mint_type: "MINT" | "AIRDROP";
 };
 
 type Cursor = {
