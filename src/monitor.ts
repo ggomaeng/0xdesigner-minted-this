@@ -82,7 +82,7 @@ export async function syncAndCast() {
     }
 
     if (minted?.value) {
-      text += `minted x${minted.value} ${name}`;
+      text = `minted x${minted.value} ${name}`;
     }
 
     const comment = await getCommentByDesigner(nft);
